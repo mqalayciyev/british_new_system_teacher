@@ -1,6 +1,12 @@
 import React, { Component } from 'react'
 
 export default class Teachers extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            display: true
+        }
+    }
     render() {
         return (
             <div className="row">
@@ -23,6 +29,13 @@ export default class Teachers extends Component {
                                     </div>
                                 </div>
                             </div>
+                            <div className="loading" style={{ display: this.state.display ? 'block' : 'none', top: '108px' }}>
+                                <div className="text-center">
+                                    <span>
+                                        Loading...
+                                    </span>
+                                </div>
+                            </div>
                             <div className="table-responsive bg-white m-0 p-3 rounded shadow">
                                 <table class="table table-bordered m-0">
                                     <thead>
@@ -32,6 +45,11 @@ export default class Teachers extends Component {
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        <tr>
+                                            <td colSpan="12" className="text-center">
+                                                Empty
+                                            </td>
+                                        </tr>
                                         <tr>
                                             <td>15/04/2021</td>
                                             <td>50</td>

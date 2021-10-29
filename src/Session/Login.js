@@ -1,7 +1,5 @@
 import { Component } from 'react'
-import {
-    Link
-} from "react-router-dom";
+import { Link } from "react-router-dom";
 import $ from 'jquery';
 import axios from 'axios';
 import serialize from 'form-serialize';
@@ -31,7 +29,7 @@ export default class Login extends Component {
 
 
 
-        let response = await axios.post('http://127.0.0.1:8000/api/login', data, {
+        let response = await axios.post(`${process.env.REACT_APP_API_URL}/login`, data, {
             headers: {
                 'Content-Type': 'application/json',
             }
@@ -41,16 +39,19 @@ export default class Login extends Component {
             NotificationManager.success('Giriş uğurlu', 'Success', 5000);
             localStorage.setItem('teacher', JSON.stringify(response.session))
             this.context.setSession(response.status, response.session)
+            window.location.href = '/'
         }
         if(response.status === 'warning'){
             let message = response.message;
             for (const [key, value] of Object.entries(message)) {
+                console.log(key)
                 NotificationManager.warning(value, 'Warning', 5000);
             }
         }
         if(response.status === 'error'){
             let message = response.message;
             for (const [key, value] of Object.entries(message)) {
+                console.log(key)
                 NotificationManager.error(value, 'Error', 5000);
             }
         }
@@ -106,11 +107,7 @@ export default class Login extends Component {
 
                             <p class="mb-1">
                                 <Link to="/ForgotPassword">Şifrəmi unutmuşam</Link>
-
                             </p>
-                            {/* <p class="mb-0">
-                                <Link to="/Register">Qeydiyyat</Link>
-                            </p> */}
                         </div>
                     </div>
                 </div>

@@ -1,13 +1,15 @@
 import React, { Component } from 'react'
 import { Link } from "react-router-dom";
-import AddStudent from './Modals/AddStudent'
 import axios from 'axios';
+import img from '../../img/profile.jpg';
+
 export default class Students extends Component {
     constructor(props) {
         super(props)
         this.state = {
             students: [],
-            data: {}
+            data: {},
+            display: true
         }
     }
     componentDidMount = () => {
@@ -24,34 +26,17 @@ export default class Students extends Component {
                 return Promise.reject(error)
             }
         )
-        let response = await axios.get(`http://127.0.0.1:8000/api/managers/students`)
+        let response = await axios.get(`${process.env.REACT_APP_API_URL}/teachers/students`)
+        console.log(response.data)
         if (response.data.status === 'success') {
-            console.log(response.data.students)
+            
             this.setState({
-                students: response.data.students
+                students: response.data.students,
+                display: false
             })
         }
         
 
-    }
-    removeComponent = () => {
-        this.setState({
-            modal: []
-        })
-    }
-    addComponent = (value) => {
-        let edit = 0
-        let data = {}
-        if(value){
-            edit = value.id
-            data = value
-        }
-        
-        let modal = <AddStudent edit={edit} data={data} removeComponent={this.removeComponent} load={this.load} />
-
-        this.setState({
-            modal: modal
-        })
     }
     
     render() {
@@ -61,29 +46,29 @@ export default class Students extends Component {
                 <div className="row">
                     <div className="col-12">
                         <div className="row">
-                            <div className="col-12 col-sm-6">
+                            <div className="col-12">
                                 <h4>Students</h4>
-                            </div>
-                            <div className="col-12 col-sm-6 clearfix">
-                                <button type="button" class="btn btn-info  float-right" data-toggle="modal" data-target="#exampleModal" onClick={() => this.addComponent()}  data-whatever="@getbootstrap">Add</button>
                             </div>
                         </div>
                         <div className="row mt-3">
                             <div className="col-12">
+                            <div className="loading" style={{ display: this.state.display ? 'block' : 'none' }}>
+                                <div className="text-center">
+                                    <span>
+                                        Loading...
+                                    </span>
+                                </div>
+                            </div>
                                 <div className="table-responsive bg-white m-0 p-3 rounded shadow">
                                     <table class="table table-bordered m-0">
                                         <thead>
                                             <tr>
                                                 <th scope="col"></th>
                                                 <th scope="col">Full name</th>
-                                                <th scope="col">Age</th>
                                                 <th scope="col">Offices</th>
                                                 <th scope="col">Age category</th>
                                                 <th scope="col">Lesson</th>
-                                                <th scope="col">Group</th>
-                                                <th scope="col">Date / type of application</th>
-                                                <th scope="col">Contacts</th>
-                                                <th scope="col">Comment</th>
+                                                <th scope="col">Type</th>
                                                 <th scope="col">Status</th>
                                                 <th scope="col"></th>
                                                 {/* <th scope="col"><button className="btn Btn32 text-danger"><i class="fas fa-trash"></i></button></th> */}
@@ -95,13 +80,10 @@ export default class Students extends Component {
                                                 return (
                                                     <tr key={index}>
                                                         <td>
-                                                            <img className="rounded-circle" style={{ width: '100px', height: '100px' }} src="https://publichealth.uga.edu/wp-content/uploads/2020/01/Thomas-Cameron_Student_Profile.jpg" alt='account' />
+                                                            <img className="rounded-circle" style={{ width: '100px', height: '100px' }} src={value.image ? process.env.REACT_APP_URL + '/' + value.image : img} alt='account' />
                                                         </td>
                                                         <td>
                                                             {value.user_name}
-                                                        </td>
-                                                        <td>
-                                                        {value.date}
                                                         </td>
                                                         <td>
                                                             {value.office_name}
@@ -118,30 +100,21 @@ export default class Students extends Component {
                                                         }
                                                         </td>
                                                         <td>
-                                                            {value.group_name}
-                                                        </td>
-                                                        <td>
-                                                            {value.created_at}
-                                                        </td>
-                                                        <td>
-                                                            <p className="m-0 p-0">{value.mobile}</p>
-                                                            <p className="m-0 p-0">{value.phone}</p>
-                                                            <p className="m-0 p-0">{value.email}</p>
-                                                            <p className="m-0 p-0"><i>{value.address}</i></p>
-                                                        </td>
-                                                        <td>
-                                                            {value.note}
+                                                            {
+                                                                value.group ? <p>Group</p> : ''
+                                                            }
+                                                            {
+                                                                value.private ? <p>Private</p> : ''
+                                                            }
+                                                            {
+                                                                value.demo ? <p>Demo</p> : ''
+                                                            }
                                                         </td>
                                                         <td>
                                                             {value.status}
                                                         </td>
                                                         <td className="btnTD text-center">
-                                                            <Link to={`/MessagesUser/${value.id}`} className="btn Btn32 btn-success mx-1"><i class="fas fa-comment"></i></Link>
-                                                            <button className="btn Btn32 btn-warning mx-1" data-toggle="modal" data-target="#exampleModal" onClick={() => this.addComponent(value)}><i class="fas fa-pencil-alt"></i></button>
-                                                            {/* <button className="btn Btn32 btn-info"><i class="far fa-eye"></i></button> */}
-
-                                                            {/* <button className="btn Btn32 btn-danger" data-id={value.id} data-link="lesson" onClick={this.delete}><i class="fas fa-trash"></i></button> */}
-
+                                                            <Link to={`/Messages/Chat/${value.id}`} className="btn Btn32 btn-success mx-1"><i class="fas fa-comment"></i></Link>
                                                         </td>
                                                     </tr>
                                                 )
@@ -159,9 +132,6 @@ export default class Students extends Component {
                         </div>
                     </div>
                 </div>
-                {
-                    this.state.modal
-                }
                 
             </>
         )

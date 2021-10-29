@@ -27,7 +27,7 @@ export default class Questions extends Component {
             }
         )
 
-        let response = await axios.get(`http://127.0.0.1:8000/api/teachers/questions/${this.props.id}`)
+        let response = await axios.get(`${process.env.REACT_APP_API_URL}/teachers/questions/${this.props.id}`)
         if (response.data.status === 'success') {
             console.log(response.data)
             this.setState({
@@ -65,7 +65,7 @@ export default class Questions extends Component {
                 return Promise.reject(error)
             }
         )
-        let response = await axios.delete(`http://127.0.0.1:8000/api/managers/questions/${id}`)
+        let response = await axios.delete(`${process.env.REACT_APP_API_URL}/managers/questions/${id}`)
         console.log(response.data)
 
         if (response.data.status === 'success') {
@@ -75,6 +75,7 @@ export default class Questions extends Component {
         if (response.data.status === 'error') {
             let message = response.data.message;
             for (const [key, value] of Object.entries(message)) {
+                console.log(key)
                 NotificationManager.error(value, 'Error', 5000);
             }
         }

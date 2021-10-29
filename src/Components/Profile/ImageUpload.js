@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import axios from 'axios';
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 import 'react-notifications/lib/notifications.css';
@@ -72,7 +72,7 @@ class ImageUpload extends React.Component {
 
         formData.append("id", teacher.user.user_id)
 
-        let response = await axios.post(`http://127.0.0.1:8000/api/teachers/teacher/${link}`, formData)
+        let response = await axios.post(`${process.env.REACT_APP_API_URL}/teachers/teacher/${link}`, formData)
 
 
         if (response.data.status === 'success') {
@@ -87,6 +87,7 @@ class ImageUpload extends React.Component {
         if (response.data.status === 'error') {
             let message = response.data.message;
             for (const [key, value] of Object.entries(message)) {
+                console.log(key)
                 NotificationManager.error(value, 'Error', 5000);
             }
 

@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import AddPrivateLessons from './Modals/AddPrivateLessons'
 import { Link } from "react-router-dom";
 import axios from 'axios';
 export default class PrivateLessons extends Component {
@@ -7,7 +6,8 @@ export default class PrivateLessons extends Component {
         super(props)
         this.state = {
             private: [],
-            data: {}
+            data: {},
+            display: true
         }
     }
     componentDidMount = () => {
@@ -24,35 +24,17 @@ export default class PrivateLessons extends Component {
                 return Promise.reject(error)
             }
         )
-        let response = await axios.get(`http://127.0.0.1:8000/api/teachers/private`)
+        let response = await axios.get(`${process.env.REACT_APP_API_URL}/teachers/private`)
         if (response.data.status === 'success') {
             console.log(response.data)
             this.setState({
-                private: response.data.private
+                private: response.data.private,
+                display: false
             })
         }
 
 
     }
-    // removeComponent = () => {
-    //     this.setState({
-    //         modal: []
-    //     })
-    // }
-    // addComponent = (value) => {
-    //     let edit = 0
-    //     let data = {}
-    //     if (value) {
-    //         edit = value.id
-    //         data = value
-    //     }
-
-    //     let modal = <AddPrivateLessons edit={edit} data={data} removeComponent={this.removeComponent} load={this.load} />
-
-    //     this.setState({
-    //         modal: modal
-    //     })
-    // }
     capitalize = (s) => {
         if (typeof s !== 'string') return ''
         return s.charAt(0).toUpperCase() + s.slice(1)
@@ -74,6 +56,13 @@ export default class PrivateLessons extends Component {
                         </div>
                         <div className="row mt-3">
                             <div className="col-12">
+                            <div className="loading" style={{ display: this.state.display ? 'block' : 'none' }}>
+                                <div className="text-center">
+                                    <span>
+                                        Loading...
+                                    </span>
+                                </div>
+                            </div>
                                 <div className="table-responsive bg-white m-0 p-3 rounded shadow">
                                     <table class="table table-bordered m-0">
                                         <thead>
@@ -95,8 +84,14 @@ export default class PrivateLessons extends Component {
                                         <tbody>
                                             {this.state.private.length > 0 ? this.state.private.map((value, index) => {
                                                 const hours_price = JSON.parse(value.hours_price)
-                                                const private_study_days = JSON.parse(value.private_study_days)
+                                                const study_days = JSON.parse(value.study_days)
                                                 let total_price = value.hours * 60 * hours_price[0].price / hours_price[0].minutes
+                                                let days = []
+                                                for (const [keys, value] of Object.entries(study_days)) {
+                                                    if(keys !== 'id' && keys !== 'company' && keys !== 'group' && value === 1){
+                                                        days.push(<p className="m-0">{this.capitalize(keys)}</p>)
+                                                    }
+                                                }
                                                 return (
                                                     <tr key={index}>
                                                         <td>
@@ -120,11 +115,7 @@ export default class PrivateLessons extends Component {
                                                         </td>
                                                         <td>
                                                             {
-                                                                private_study_days.map((element, i) => {
-                                                                    let label = this.capitalize(Object.keys(element).find(key => element[key] === 1 && key.toLowerCase() !== 'id' && key.toLowerCase() !== 'company' && key.toLowerCase() !== 'group'))
-                                                                    return <p key={i} className="m-0">{label} </p>
-
-                                                                })
+                                                                days
                                                             }
                                                         </td>
                                                         <td>
@@ -159,9 +150,6 @@ export default class PrivateLessons extends Component {
                         </div>
                     </div>
                 </div>
-                {
-                    this.state.modal
-                }
             </>
         )
     }

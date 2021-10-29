@@ -13,7 +13,8 @@ export default class PrivateLessons extends Component {
         this.state = {
             media: [],
             type: {'audio': audio, 'video': video, 'book': book},
-            data: {}
+            data: {},
+            display: true
         }
     }
     componentDidMount = () => {
@@ -30,11 +31,12 @@ export default class PrivateLessons extends Component {
                 return Promise.reject(error)
             }
         )
-        let response = await axios.get(`http://127.0.0.1:8000/api/managers/media`)
+        let response = await axios.get(`${process.env.REACT_APP_API_URL}/managers/media`)
         console.log(response.data)
         if (response.data.status === 'success') {
             this.setState({
-                media: response.data.media
+                media: response.data.media,
+                display: false
             })
         }
 
@@ -74,7 +76,7 @@ export default class PrivateLessons extends Component {
                 return Promise.reject(error)
             }
         )
-        let response = await axios.delete(`http://127.0.0.1:8000/api/managers/media/${id}`)
+        let response = await axios.delete(`${process.env.REACT_APP_API_URL}/managers/media/${id}`)
         if (response.data.status === 'success') {
             NotificationManager.warning('Media silindi.', 'Warning', 5000);
             this.load()
@@ -99,6 +101,13 @@ export default class PrivateLessons extends Component {
                         </div>
                         <div className="row mt-3">
                             <div className="col-12">
+                            <div className="loading" style={{ display: this.state.display ? 'block' : 'none' }}>
+                                <div className="text-center">
+                                    <span>
+                                        Loading...
+                                    </span>
+                                </div>
+                            </div>
                                 <div className="table-responsive bg-white m-0 p-3 rounded shadow">
                                     <table class="table table-bordered m-0">
                                         <thead>
@@ -125,7 +134,7 @@ export default class PrivateLessons extends Component {
                                                 return (
                                                     <tr key={index}>
                                                         <td className="text-center">
-                                                        <a href={value.file} target="_blank">
+                                                        <a href={value.file} target="_blank" rel="noreferrer">
                                                             <CustomTag style={{ width: "30vw", minWidth: "50px", maxWidth: "150px" }} src={value.file}  />
                                                             {value.type === 'image' ? '' : <><p><img className="w-100" style={{ maxWidth: '80px' }} src={this.state.type[value.type]} alt='media' /></p> <p>{value.title}</p></>}
                                                             </a>

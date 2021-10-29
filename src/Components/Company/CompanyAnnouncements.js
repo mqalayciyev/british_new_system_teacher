@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import AddAnnouncements from './Modals/AddAnnouncements'
 import axios from 'axios';
 
 export default class CompanyAnnouncements extends Component {
@@ -8,6 +7,7 @@ export default class CompanyAnnouncements extends Component {
         super(props)
         this.state = {
             announcements: [],
+            display: true
         }
     }
     componentDidMount = () => {
@@ -24,49 +24,36 @@ export default class CompanyAnnouncements extends Component {
                 return Promise.reject(error)
             }
         )
-        let response = await axios.get(`http://127.0.0.1:8000/api/teachers/announcements`)
+        let response = await axios.get(`${process.env.REACT_APP_API_URL}/teachers/announcements`)
         if (response.data.status === 'success') {
             this.setState({
-                announcements: response.data.announcements
+                announcements: response.data.announcements,
+                display: false
             })
         }
 
     }
-    removeComponent = () => {
-        this.setState({
-            modal: []
-        })
-    }
-    addComponent = (value) => {
-        console.log(value)
-        let edit = 0
-        let data = {}
-        if (value) {
-            edit = value.id
-            data = value
-        }
 
-        let modal = <AddAnnouncements edit={edit} data={data} load={this.load} removeComponent={this.removeComponent} />
 
-        this.setState({
-            modal: modal
-        })
-    }
     render() {
         return (
             <>
                 <div className="row">
                     <div className="col-12">
                         <div className="row">
-                            <div className="col-12 col-sm-6">
+                            <div className="col-12">
                                 <h4>Company announcements</h4>
-                            </div>
-                            <div className="col-12 col-sm-6 clearfix">
-                                <button type="button" class="btn btn-info  float-right" data-toggle="modal" data-target="#exampleModal" onClick={() => this.addComponent()}>Add</button>
                             </div>
                         </div>
                         <div className="row mt-3">
                             <div className="col-12">
+                            <div className="loading" style={{ display: this.state.display ? 'block' : 'none' }}>
+                                <div className="text-center">
+                                    <span>
+                                        Loading...
+                                    </span>
+                                </div>
+                            </div>
                                 <div className="table-responsive bg-white m-0 p-3 rounded shadow">
                                     <table class="table table-bordered m-0">
                                         <thead>
@@ -131,9 +118,6 @@ export default class CompanyAnnouncements extends Component {
                         </div>
                     </div>
                 </div>
-                {
-                    this.state.modal
-                }
                 
             </>
         )

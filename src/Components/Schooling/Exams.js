@@ -8,7 +8,8 @@ export default class Exams extends Component {
         super(props)
         this.state = {
             exam: [],
-            data: {}
+            data: {},
+            display: true
         }
     }
     componentDidMount = () => {
@@ -25,11 +26,12 @@ export default class Exams extends Component {
                 return Promise.reject(error)
             }
         )
-        let response = await axios.get(`http://127.0.0.1:8000/api/teachers/exam`)
+        let response = await axios.get(`${process.env.REACT_APP_API_URL}/teachers/exam`)
         if (response.data.status === 'success') {
             console.log(response.data)
             this.setState({
-                exam: response.data.exam
+                exam: response.data.exam,
+                display: false
             })
         }
 
@@ -73,6 +75,13 @@ export default class Exams extends Component {
                         </div>
                         <div className="row mt-3">
                             <div className="col-12">
+                            <div className="loading" style={{ display: this.state.display ? 'block' : 'none' }}>
+                                <div className="text-center">
+                                    <span>
+                                        Loading...
+                                    </span>
+                                </div>
+                            </div>
                                 <div className="table-responsive bg-white m-0 p-3 rounded shadow">
                                     <table class="table table-bordered m-0">
                                         <thead>
@@ -82,6 +91,7 @@ export default class Exams extends Component {
                                                 <th scope="col">Level</th>
                                                 <th scope="col">Type</th>
                                                 <th scope="col">Test</th>
+												<th scope="col">Time</th>
                                                 <th scope="col">Note</th>
                                                 <th scope="col">Status</th>
                                                 <th scope="col"></th>
@@ -90,6 +100,11 @@ export default class Exams extends Component {
                                         </thead>
                                         <tbody>
                                             {this.state.exam.length > 0 ? this.state.exam.map((value, index) => {
+												const exam_levels = JSON.parse(value.exam_levels)
+                                                let levels = []
+												for (const [key, value] of Object.entries(exam_levels)) {
+                                                    levels.push(<p className="m-0">{value.exam_level}</p>)
+                                                }
                                                 return (
                                                     <tr key={index}>
                                                         <td>
@@ -100,7 +115,7 @@ export default class Exams extends Component {
                                                         </td>
 
                                                         <td>
-                                                            {value.level_title}
+                                                            {levels}
                                                         </td>
 
                                                         <td>
@@ -108,6 +123,9 @@ export default class Exams extends Component {
                                                         </td>
                                                         <td>
                                                             {value.test_name}
+                                                        </td>
+														<td>
+                                                            {value.time} minutes
                                                         </td>
                                                         <td>
                                                             {value.note}

@@ -3,7 +3,6 @@ import axios from 'axios';
 import { Link } from "react-router-dom";
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 import 'react-notifications/lib/notifications.css';
-import queryString from 'query-string';
 import img from '../../img/profile.jpg';
 
 
@@ -11,7 +10,7 @@ import img from '../../img/profile.jpg';
 export default class Chat extends Component {
     constructor(props) {
         super(props)
-        this.state = { chat: [], messageArea: [], myid: 0, userid: 0, formData: {userid: 0}};
+        this.state = { chat: [], messageArea: [], myid: 0, userid: 0, formData: {userid: 0}, display: true};
     }
     componentDidMount = () => {
         this.load()
@@ -41,12 +40,13 @@ export default class Chat extends Component {
             }
         )
 
-        let response = await axios.get(`http://127.0.0.1:8000/api/teachers/messages/${id}`)
+        let response = await axios.get(`${process.env.REACT_APP_API_URL}/teachers/messages/${id}`)
 
         if (response.data.status === 'success') {
             this.setState({
                 chat: response.data.chat,
-                user: response.data.user
+                user: response.data.user,
+                display: false
             })
             this.messageRender();
         }
@@ -88,7 +88,7 @@ export default class Chat extends Component {
                 return Promise.reject(error)
             }
         )
-        let response= await axios.post(`http://127.0.0.1:8000/api/teachers/messages`, formData)
+        let response= await axios.post(`${process.env.REACT_APP_API_URL}/teachers/messages`, formData)
 
         if(response.data.status === 'success'){
             // NotificationManager.success('Mesaj gonderildi.', 'Success', 5000);
@@ -97,6 +97,7 @@ export default class Chat extends Component {
         if(response.data.status === 'error'){
             let message = response.data.message;
             for (const [key, value] of Object.entries(message)) {
+                console.log(key)
                 NotificationManager.error(value, 'Error', 5000);
             }
         }
@@ -138,12 +139,12 @@ export default class Chat extends Component {
                                     <p>{this.dateReplace(value.created_at)} <b>You</b></p>
                                     <p>{value.message}</p>
                                     {
-                                        (value.file_url) ? <p><i class="fas fa-paperclip"></i> <a href={`${value.file_url}/${value.file_name}`} target="_blank" download={`${value.file_url}/${value.file_name}`}>{value.file_name}</a></p> : null
+                                        (value.file_url) ? <p><i class="fas fa-paperclip"></i> <a href={`${value.file_url}/${value.file_name}`} target="_blank" rel="noreferrer" download={`${value.file_url}/${value.file_name}`}>{value.file_name}</a></p> : null
                                     }
                                 </div>
                             </div>
                             <div className="col">
-                                <img className="rounded-circle w-100" style={{ maxWidth: '80px', maxHeight: '80px' }}  src={value.user1_image ? value.user1_image : img} />
+                                <img className="rounded-circle w-100" alt="profile_image" style={{ maxWidth: '80px', maxHeight: '80px' }}  src={value.user1_image ? process.env.REACT_APP_URL + '/' + value.user1_image : img} />
                             </div>
                         </div>
                     )
@@ -152,7 +153,7 @@ export default class Chat extends Component {
                     chat.push(
                         <div className="row mt-3">
                             <div className="col">
-                                <img className="rounded-circle w-100" style={{ maxWidth: '80px', maxHeight: '80px' }} src={value.user1_image ? value.user1_image : img} />
+                                <img className="rounded-circle w-100" alt="profile_image" style={{ maxWidth: '80px', maxHeight: '80px' }} src={value.user1_image ? process.env.REACT_APP_URL + '/' + value.user1_image : img} />
                             </div>
                             <div className="col-11">
                                 <div className="position-relative col-12 px-3 rounded" style={{ border: '1px solid #20C997FF' }}>
@@ -160,7 +161,7 @@ export default class Chat extends Component {
                                     <p><Link to={`/User/${value.user1_id}`}>{value.user_1}</Link> {this.dateReplace(value.created_at)}</p>
                                     <p>{value.message}</p>
                                     {
-                                        (value.file_url) ? <p><i class="fas fa-paperclip"></i> <a href={`${value.file_url}/${value.file_name}`} target="_blank" download={`${value.file_url}/${value.file_name}`}>{value.file_name}</a></p> : null
+                                        (value.file_url) ? <p><i class="fas fa-paperclip"></i> <a href={`${value.file_url}/${value.file_name}`} target="_blank" rel="noreferrer" download={`${value.file_url}/${value.file_name}`}>{value.file_name}</a></p> : null
                                     }
 
                                 </div>
@@ -208,6 +209,13 @@ export default class Chat extends Component {
                     <hr />
                     <div className="row">
                         <div className="col-12">
+						<div className="loading" style={{ display: this.state.display ? 'block' : 'none', top: '15px' }}>
+                            <div className="text-center">
+                                <span>
+                                    Loading...
+                                </span>
+                            </div>
+                        </div>
                             <div className="col-12 p-3 bg-white pb-4 message-area">
                                 {
                                     this.state.messageArea.length > 0 ? this.state.messageArea.map((value, index) => {

@@ -55,7 +55,7 @@ export default class About extends Component {
 
         formData.append("id", teacher.user.user_id)
 
-        let response = await axios.post(`http://127.0.0.1:8000/api/teachers/teacher/${link}`, formData)
+        let response = await axios.post(`${process.env.REACT_APP_API_URL}/teachers/teacher/${link}`, formData)
 
         console.log(response.data)
 
@@ -71,6 +71,7 @@ export default class About extends Component {
         if (response.data.status === 'error') {
             let message = response.data.message;
             for (const [key, value] of Object.entries(message)) {
+                console.log(key)
                 NotificationManager.error(value, 'Error', 5000);
             }
             // this.setState({ formData: {} })
@@ -91,7 +92,7 @@ export default class About extends Component {
             }
         )
 
-        let response = await axios.post(`http://127.0.0.1:8000/api/teachers/teacher/delete_image/${teacher.user.user_id}`)
+        let response = await axios.post(`${process.env.REACT_APP_API_URL}/teachers/teacher/delete_image/${teacher.user.user_id}`)
         if(response.data.status === 'success'){
             NotificationManager.success('Məlumatlar dəyişdirildi.', 'Success', 5000);
             teacher['user']['user_info'] = response.data.user;
@@ -102,6 +103,7 @@ export default class About extends Component {
         if(response.data.status === 'error'){
             let message = response.data.message;
             for (const [key, value] of Object.entries(message)) {
+                console.log(key)
                 NotificationManager.error(value, 'Error', 5000);
             }
             this.setState({formData: {}})
@@ -142,7 +144,7 @@ export default class About extends Component {
                                         cancelBtnBsStyle="danger"
                                         cancelBtnText='No, cancel!'
                                     />
-                                    <img src={this.state.img ? this.state.img : img} style={{ width: '150px', height: '150px' }} className="rounded-circle" alt="user" />
+                                    <img src={this.state.img ? process.env.REACT_APP_URL + '/' + this.state.img : img} style={{ width: '150px', height: '150px' }} className="rounded-circle" alt="user" />
                                 </div>
                             </div>
                         <div className="card-body">

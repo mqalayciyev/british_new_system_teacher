@@ -1,33 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import img from '../img/profile.jpg';
 import axios from 'axios';
 import { Link, useLocation  } from "react-router-dom";
 
 function Sidebar(params) {
 
-    const [count, setCount] = useState();
-
-    // useEffect(() => {
-    //     setInterval(async function () {
-
-    //         console.log(new Date());
-    //         let teacher = JSON.parse(localStorage.getItem('teacher'))
-    //         axios.interceptors.request.use(
-    //             config => {
-    //                 config.headers.authorization = `Bearer ${teacher.user.token}`;
-    //                 return config;
-    //             },
-    //             error => {
-    //                 return Promise.reject(error)
-    //             }
-    //         )
-    //         let response = await axios.get(`http://127.0.0.1:8000/api/teachers/count-messages`)
-
-    //         if (response.data.status === 'success') {
-    //             setCount(response.data.count)
-    //         }
-    //     }, 60000);
-    // });
     
     const location = useLocation();
 
@@ -39,10 +16,10 @@ function Sidebar(params) {
     return (
             <aside className="main-sidebar sidebar-dark-primary elevation-4">
 
-                <div className="sidebar">
+                <div className="sidebar" style={{ overflowY: 'auto' }}>
                     <div className="user-panel mt-3 pb-3 mb-3 d-flex">
                         <div className="image">
-                            <img src={teacher.user.user_info.image ? teacher.user.user_info.image : img} className="img-circle elevation-2" alt="user" />
+                            <img src={teacher.user.user_info.image ? process.env.REACT_APP_URL + '/' + teacher.user.user_info.image : img} className="img-circle elevation-2" alt="user" />
                             {/* <img src="{user2}" className="img-circle elevation-2" alt="user" /> */}
                         </div>
                         <div className="info">
@@ -55,8 +32,8 @@ function Sidebar(params) {
                         <li className="nav-item">
                         <Link to="/" className={splitLocation[1] === "" || splitLocation[1] === 'TasksCompleted' || splitLocation[1] === 'TasksActual' ? "nav-link active" : "nav-link"}>
                             <i className="nav-icon fa fa-list-alt"></i>
-                                <p> My tasks </p>
-                            </Link>
+                            <p> My tasks </p>
+                        </Link>
                         </li>
                         <li className="nav-item">
                             <Link to="/Lead" className={splitLocation[1] === "Lead" ? "nav-link active" : "nav-link"}> 
@@ -70,7 +47,7 @@ function Sidebar(params) {
                             <Link to="/Messages" className={splitLocation[1] === "Messages" ? "nav-link active" : "nav-link"}> 
                                 <i className="nav-icon far fa-envelope"></i>
                                 <p>
-                                 Messages {count ? <span className="badge badge-danger">{count}</span> : ''}
+                                 Messages
                                 </p>
                             </Link>
                         </li>
@@ -144,6 +121,12 @@ function Sidebar(params) {
                                         <p>Attendance map</p>
                                     </Link>
                                 </li>
+                                <li className="nav-item">
+                                    <Link to="/Students" className={splitLocation[1] === "Students" ? "nav-link active" : "nav-link"}>
+                                        <i className="far fa-circle nav-icon"></i>
+                                        <p>Students</p>
+                                    </Link>
+                                </li>
                             </ul>
                         </li>
                         <li className="nav-item">
@@ -194,6 +177,14 @@ function Sidebar(params) {
                                 <i className="nav-icon fas fa-star-half-alt"></i>
                                 <p>
                                 Evaluation
+                                </p>
+                            </Link>
+                        </li>
+						<li className="nav-item">
+                            <Link to="/Notifications" className={splitLocation[1] === "Notifications" ? "nav-link active" : "nav-link"}> 
+                                <i className="nav-icon far fa-bell"></i>
+                                <p>
+                                Notifications
                                 </p>
                             </Link>
                         </li>

@@ -1,6 +1,7 @@
 {
   "name": "teacher",
   "version": "0.1.0",
+  "homepage": "http://www.teacher.todrix.com",
   "private": true,
   "dependencies": {
     "@syncfusion/ej2-react-schedule": "^19.1.57",

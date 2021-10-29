@@ -48,7 +48,6 @@ export default class AddQuestion extends Component {
         event.preventDefault()
 
         let data = this.state.data
-        console.log(data)
         let teacher = JSON.parse(localStorage.getItem('teacher'))
         axios.interceptors.request.use(
             config => {
@@ -61,12 +60,11 @@ export default class AddQuestion extends Component {
         )
         let response = ""
         if (this.props.edit === 0) {
-            response = await axios.post(`http://127.0.0.1:8000/api/managers/questions`, data)
+            response = await axios.post(`${process.env.REACT_APP_API_URL}/managers/questions`, data)
         }
         else {
-            response = await axios.put(`http://127.0.0.1:8000/api/managers/questions/${this.props.edit}`, data)
+            response = await axios.put(`${process.env.REACT_APP_API_URL}/managers/questions/${this.props.edit}`, data)
         }
-        console.log(response.data)
 
         if (response.data.status === 'success') {
             NotificationManager.success('Sual əlavə edildi.', 'Success', 5000);
@@ -76,6 +74,7 @@ export default class AddQuestion extends Component {
         if (response.data.status === 'error') {
             let message = response.data.message;
             for (const [key, value] of Object.entries(message)) {
+                console.log(key)
                 NotificationManager.error(value, 'Error', 5000);
             }
         }

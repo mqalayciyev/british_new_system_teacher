@@ -52,7 +52,7 @@ export default class EditProfil extends Component {
             }
         )
 
-        let response = await axios.put(`http://127.0.0.1:8000/api/teachers/teacher/${this.props.user.id}`, data)
+        let response = await axios.put(`${process.env.REACT_APP_API_URL}/teachers/teacher/${this.props.user.id}`, data)
         if(response.data.status === 'success'){
             NotificationManager.success('Məlumatlar dəyişdirildi.', 'Success', 5000);
             userInfo['user']['user_info'] = response.data.user;
@@ -62,6 +62,7 @@ export default class EditProfil extends Component {
         if(response.data.status === 'error'){
             let message = response.data.message;
             for (const [key, value] of Object.entries(message)) {
+                console.log(key)
                 NotificationManager.error(value, 'Error', 5000);
             }
         }

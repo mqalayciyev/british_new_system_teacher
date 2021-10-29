@@ -54,7 +54,7 @@ export default class AddDemoLessons extends Component {
             }
         )
         this.setState({ data: this.props.data })
-        let lesson_res = await axios.get(`http://127.0.0.1:8000/api/managers/lesson`)
+        let lesson_res = await axios.get(`${process.env.REACT_APP_API_URL}/managers/lesson`)
         if (lesson_res.data.status === 'success') {
             console.log(lesson_res.data)
 
@@ -62,7 +62,7 @@ export default class AddDemoLessons extends Component {
                 lessons: lesson_res.data.lesson
             })
         }
-        let level_res = await axios.get(`http://127.0.0.1:8000/api/managers/level`)
+        let level_res = await axios.get(`${process.env.REACT_APP_API_URL}/managers/level`)
         if (level_res.data.status === 'success') {
             console.log(level_res.data)
             this.setState({
@@ -86,10 +86,10 @@ export default class AddDemoLessons extends Component {
         )
         let response = ""
         if (this.props.edit === 0) {
-            response = await axios.post(`http://127.0.0.1:8000/api/managers/tests`, data)
+            response = await axios.post(`${process.env.REACT_APP_API_URL}/managers/tests`, data)
         }
         else {
-            response = await axios.put(`http://127.0.0.1:8000/api/managers/tests/${this.props.edit}`, data)
+            response = await axios.put(`${process.env.REACT_APP_API_URL}/managers/tests/${this.props.edit}`, data)
         }
         console.log(response.data)
 
@@ -100,6 +100,7 @@ export default class AddDemoLessons extends Component {
         if (response.data.status === 'error') {
             let message = response.data.message;
             for (const [key, value] of Object.entries(message)) {
+                console.log(key)
                 NotificationManager.error(value, 'Error', 5000);
             }
         }

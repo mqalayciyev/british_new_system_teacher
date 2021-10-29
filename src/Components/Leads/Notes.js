@@ -40,10 +40,10 @@ export default class Notes extends Component {
         )
         let response = ""
         if (this.state.edit === 0) {
-            response = await axios.post(`http://127.0.0.1:8000/api/teachers/leads-notes`, data)
+            response = await axios.post(`${process.env.REACT_APP_API_URL}/teachers/leads-notes`, data)
         }
         else {
-            response = await axios.put(`http://127.0.0.1:8000/api/teachers/leads-notes/${this.state.edit}`, data)
+            response = await axios.put(`${process.env.REACT_APP_API_URL}/teachers/leads-notes/${this.state.edit}`, data)
         }
         console.log(response.data)
 
@@ -54,6 +54,7 @@ export default class Notes extends Component {
         if (response.data.status === 'error') {
             let message = response.data.message;
             for (const [key, value] of Object.entries(message)) {
+                console.log(key)
                 NotificationManager.error(value, 'Error', 5000);
             }
         }
@@ -81,7 +82,7 @@ export default class Notes extends Component {
                 return Promise.reject(error)
             }
         )
-        let response = await axios.delete(`http://127.0.0.1:8000/api/teachers/leads-notes/${id}`)
+        let response = await axios.delete(`${process.env.REACT_APP_API_URL}/teachers/leads-notes/${id}`)
 
         if (response.data.status === 'success') {
             NotificationManager.success(response.data.message, 'Success', 5000);
@@ -90,6 +91,7 @@ export default class Notes extends Component {
         if (response.data.status === 'error') {
             let message = response.data.message;
             for (const [key, value] of Object.entries(message)) {
+                console.log(key)
                 NotificationManager.error(value, 'Error', 5000);
             }
         }
@@ -106,7 +108,7 @@ export default class Notes extends Component {
                 return Promise.reject(error)
             }
         )
-        let response = await axios.get(`http://127.0.0.1:8000/api/teachers/leads-notes/${this.props.leads}`)
+        let response = await axios.get(`${process.env.REACT_APP_API_URL}/teachers/leads-notes/${this.props.leads}`)
 
         if (response.data.status === 'success') {
             this.setState({

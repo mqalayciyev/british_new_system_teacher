@@ -2,13 +2,13 @@ import React, { Component } from 'react'
 import Add from './Add';
 import Notes from './Notes';
 import axios from 'axios';
-import { NotificationContainer, NotificationManager } from 'react-notifications';
 import 'react-notifications/lib/notifications.css';
 export default class Leads extends Component {
     constructor(props) {
         super(props)
         this.state = {
             leads: [],
+            display: true
         }
     }
     componentDidMount = () => {
@@ -53,7 +53,7 @@ export default class Leads extends Component {
     //                 return Promise.reject(error)
     //             }
     //         )
-    //         let response = await axios.post(`http://127.0.0.1:8000/api/teachers/addStudent/${id}`, {password: password})
+    //         let response = await axios.post(`${process.env.REACT_APP_API_URL}/teachers/addStudent/${id}`, {password: password})
     //         console.log(response.data)
     //         if(response.data.status === 'success'){
     //             NotificationManager.success('Leads telebeler siyahisina elave edildi', 'Success', 5000);
@@ -81,10 +81,11 @@ export default class Leads extends Component {
                 return Promise.reject(error)
             }
         )
-        let response = await axios.get(`http://127.0.0.1:8000/api/teachers/leads`)
+        let response = await axios.get(`${process.env.REACT_APP_API_URL}/teachers/leads`)
         if(response.data.status === 'success'){
             this.setState({
-                leads: response.data.leads
+                leads: response.data.leads,
+                display: false
             })
         }
         
@@ -92,7 +93,6 @@ export default class Leads extends Component {
     render() {
         return (
             <>
-                <NotificationContainer />
                 <div className="row">
                     <div className="col-12">
                         <div className="row">
@@ -105,6 +105,13 @@ export default class Leads extends Component {
                         </div>
                         <div className="row mt-3">
                             <div className="col-12">
+                            <div className="loading" style={{ display: this.state.display ? 'block' : 'none' }}>
+                                <div className="text-center">
+                                    <span>
+                                        Loading...
+                                    </span>
+                                </div>
+                            </div>
                                 <div className="table-responsive bg-white m-0 p-3 rounded shadow">
                                     <table className="table table-bordered m-0">
                                         <thead>

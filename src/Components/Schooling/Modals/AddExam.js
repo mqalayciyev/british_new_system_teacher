@@ -14,7 +14,7 @@ export default class AddExam extends Component {
             teacher: [],
             tests: [],
             exam_type: [],
-            selectedLevel: []
+            selectedLevel: [],
         };
     }
     handleFormData = async event => {
@@ -60,7 +60,7 @@ export default class AddExam extends Component {
         if (this.props.edit > 0) {
 
 
-            let response = await axios.post(`http://127.0.0.1:8000/api/managers/exam/levels/${this.props.edit}`)
+            let response = await axios.post(`${process.env.REACT_APP_API_URL}/managers/exam/levels/${this.props.edit}`)
             if (response.data.status === 'success') {
                 let array = []
                 if (response.data.levels.length > 0) {
@@ -73,14 +73,14 @@ export default class AddExam extends Component {
         }
 
 
-        let office_res = await axios.get(`http://127.0.0.1:8000/api/managers/offices`)
+        let office_res = await axios.get(`${process.env.REACT_APP_API_URL}/managers/offices`)
         if (office_res.data.status === 'success') {
             // console.log(office_res.data)
             this.setState({
                 offices: office_res.data.offices
             })
         }
-        let type_res = await axios.get(`http://127.0.0.1:8000/api/managers/exam_type`)
+        let type_res = await axios.get(`${process.env.REACT_APP_API_URL}/managers/exam_type`)
         if (type_res.data.status === 'success') {
             // console.log(lesson_res.data)
 
@@ -88,7 +88,7 @@ export default class AddExam extends Component {
                 exam_type: type_res.data.exam_type
             })
         }
-        let test_res = await axios.get(`http://127.0.0.1:8000/api/teachers/exam_tests`)
+        let test_res = await axios.get(`${process.env.REACT_APP_API_URL}/teachers/exam_tests`)
         // console.log(test_res)
         if (test_res.data.status === 'success') {
             console.log(test_res.data)
@@ -97,7 +97,7 @@ export default class AddExam extends Component {
                 tests: test_res.data.tests
             })
         }
-        let level_res = await axios.get(`http://127.0.0.1:8000/api/managers/level`)
+        let level_res = await axios.get(`${process.env.REACT_APP_API_URL}/managers/level`)
         if (level_res.data.status === 'success') {
             let array = []
             if (level_res.data.level.length > 0) {
@@ -126,12 +126,11 @@ export default class AddExam extends Component {
         )
         let response = ""
         if (this.props.edit === 0) {
-            response = await axios.post(`http://127.0.0.1:8000/api/teachers/exam`, data)
+            response = await axios.post(`${process.env.REACT_APP_API_URL}/teachers/exam`, data)
         }
         else {
-            response = await axios.put(`http://127.0.0.1:8000/api/teachers/exam/${this.props.edit}`, data)
+            response = await axios.put(`${process.env.REACT_APP_API_URL}/teachers/exam/${this.props.edit}`, data)
         }
-        console.log(response.data)
 
         if (response.data.status === 'success') {
             NotificationManager.success('Imtahan əlavə edildi.', 'Success', 5000);
@@ -140,6 +139,7 @@ export default class AddExam extends Component {
         if (response.data.status === 'error') {
             let message = response.data.message;
             for (const [key, value] of Object.entries(message)) {
+                console.log(key)
                 NotificationManager.error(value, 'Error', 5000);
             }
         }
@@ -269,6 +269,18 @@ export default class AddExam extends Component {
                                                         classNamePrefix="select"
                                                         onChange={this.changeLevel}
                                                     />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+									<div class="row">
+                                        <div className="col-sm-6">
+                                            <div className="row form-group ">
+                                                <label className="col-sm-4 col-form-label ">
+                                                    Time:
+                                                </label>
+                                                <div className="col-sm-8">
+													<input type="text" placeholder="Minutes" className="form-control" name="time" value={this.props.data.time} onChange={this.handleFormData} />
                                                 </div>
                                             </div>
                                         </div>

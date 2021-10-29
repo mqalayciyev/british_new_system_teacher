@@ -7,7 +7,6 @@ export default class Add extends Component {
         super(props)
         this.state = {
             data: {},
-            // owner: []
         }
     }
 
@@ -22,7 +21,7 @@ export default class Add extends Component {
                 return Promise.reject(error)
             }
         )
-        // let response = await axios.post(`http://127.0.0.1:8000/api/teachers/owner`)
+        // let response = await axios.post(`${process.env.REACT_APP_API_URL}/teachers/owner`)
         // if (response.data.status === 'success') {
         //     this.setState({
         //         owner: response.data.owner
@@ -63,10 +62,10 @@ export default class Add extends Component {
         )
         let response = ""
         if (this.props.edit === 0) {
-            response = await axios.post(`http://127.0.0.1:8000/api/teachers/leads`, data)
+            response = await axios.post(`${process.env.REACT_APP_API_URL}/teachers/leads`, data)
         }
         else {
-            response = await axios.put(`http://127.0.0.1:8000/api/teachers/leads/${this.props.edit}`, data)
+            response = await axios.put(`${process.env.REACT_APP_API_URL}/teachers/leads/${this.props.edit}`, data)
         }
 
         if (response.data.status === 'success') {
@@ -76,6 +75,7 @@ export default class Add extends Component {
         if (response.data.status === 'error') {
             let message = response.data.message;
             for (const [key, value] of Object.entries(message)) {
+                console.log(key)
                 NotificationManager.error(value, 'Error', 5000);
             }
         }

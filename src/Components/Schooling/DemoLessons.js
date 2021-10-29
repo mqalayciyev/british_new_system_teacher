@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import AddDemoLessons from './Modals/AddDemoLessons'
 import { Link } from "react-router-dom";
 import axios from 'axios';
 
@@ -8,7 +7,8 @@ export default class DemoLessons extends Component {
         super(props)
         this.state = {
             demo: [],
-            data: {}
+            data: {},
+            display: true
         }
     }
     componentDidMount = () => {
@@ -25,35 +25,17 @@ export default class DemoLessons extends Component {
                 return Promise.reject(error)
             }
         )
-        let response = await axios.get(`http://127.0.0.1:8000/api/teachers/demo`)
+        let response = await axios.get(`${process.env.REACT_APP_API_URL}/teachers/demo`)
         if (response.data.status === 'success') {
             console.log(response.data)
             this.setState({
-                demo: response.data.demo
+                demo: response.data.demo,
+                display: false
             })
         }
 
 
     }
-    // removeComponent = () => {
-    //     this.setState({
-    //         modal: []
-    //     })
-    // }
-    // addComponent = (value) => {
-    //     let edit = 0
-    //     let data = {}
-    //     if (value) {
-    //         edit = value.id
-    //         data = value
-    //     }
-
-    //     let modal = <AddDemoLessons edit={edit} data={data} removeComponent={this.removeComponent} load={this.load} />
-
-    //     this.setState({
-    //         modal: modal
-    //     })
-    // }
     capitalize = (s) => {
         if (typeof s !== 'string') return ''
         return s.charAt(0).toUpperCase() + s.slice(1)
@@ -79,6 +61,13 @@ export default class DemoLessons extends Component {
                         </div>
                         <div className="row mt-3">
                             <div className="col-12">
+                            <div className="loading" style={{ display: this.state.display ? 'block' : 'none' }}>
+                                <div className="text-center">
+                                    <span>
+                                        Loading...
+                                    </span>
+                                </div>
+                            </div>
                                 <div className="table-responsive bg-white m-0 p-3 rounded shadow">
                                     <table class="table table-bordered m-0">
                                         <thead>
@@ -134,9 +123,6 @@ export default class DemoLessons extends Component {
                         </div>
                     </div>
                 </div>
-                {
-                    this.state.modal
-                }
             </>
         )
     }

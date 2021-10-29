@@ -8,7 +8,8 @@ export default class GroupLessons extends Component {
         super(props)
         this.state = {
             tests: [],
-            data: {}
+            data: {},
+            display: true
         }
     }
     componentDidMount = () => {
@@ -25,11 +26,12 @@ export default class GroupLessons extends Component {
                 return Promise.reject(error)
             }
         )
-        let response = await axios.get(`http://127.0.0.1:8000/api/managers/tests`)
+        let response = await axios.get(`${process.env.REACT_APP_API_URL}/managers/tests`)
         if (response.data.status === 'success') {
             // console.log(response.data)
             this.setState({
-                tests: response.data.tests
+                tests: response.data.tests,
+                display: false
             })
         }
 
@@ -81,6 +83,13 @@ export default class GroupLessons extends Component {
                         </div>
                         <div className="row mt-3">
                             <div className="col-12">
+                            <div className="loading" style={{ display: this.state.display ? 'block' : 'none' }}>
+                                <div className="text-center">
+                                    <span>
+                                        Loading...
+                                    </span>
+                                </div>
+                            </div>
                                 <div className="table-responsive bg-white m-0 p-3 rounded shadow">
                                     <table class="table table-bordered m-0">
                                         <thead>
