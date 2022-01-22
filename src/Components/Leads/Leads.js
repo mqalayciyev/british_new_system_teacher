@@ -3,6 +3,8 @@ import Add from './Add';
 import Notes from './Notes';
 import axios from 'axios';
 import 'react-notifications/lib/notifications.css';
+import Datatables from '../Datatables';
+
 export default class Leads extends Component {
     constructor(props) {
         super(props)
@@ -90,7 +92,76 @@ export default class Leads extends Component {
         }
         
     }
+    buttons = (row) => {
+        return (
+            <div style={{ minWidth: '250px' }}>
+                <button className="btn Btn32 btn-warning" data-toggle="modal" data-target="#exampleModal" onClick={() => this.addComponent(row.value)}><i className="fas fa-pencil-alt"></i></button>
+                <button className="btn Btn32 btn-info" onClick={() => this.addStudent(row.id)}><i className="fas fa-user-plus"></i></button>
+                <button className="btn Btn32 btn-primary" data-toggle="modal" data-target="#notesModal" onClick={() => this.notes(row.id)}><i className="fas fa-clipboard-list"></i></button>
+                { this.state.delete ? <button className="btn Btn32 btn-danger" onClick={() => this.delete(row.id)}><i className="fas fa-trash"></i></button> : '' }
+            </div>
+        )
+    }
     render() {
+        const columns = [
+            {
+                name: 'Lead Name',
+                sortable: true,
+                selector: row => row.title,
+            },
+            {
+                name: 'Mobile',
+                selector: row => row.mobile,
+            },
+            {
+                name: 'Address',
+                selector: row => row.address,
+            },
+            {
+                name: 'Email',
+                selector: row => row.email,
+            },
+            {
+                name: 'Leads purpose',
+                selector: row => row.purpose,
+            },
+            {
+                name: 'Leads owner',
+                sortable: true,
+                selector: row => row.owner,
+            },
+            {
+                name: 'Leads source',
+                selector: row => row.source,
+            },
+            {
+                name: 'Created at',
+                sortable: true,
+                selector: row => row.created_at,
+            },
+            {
+                name: '',
+                selector: row => this.buttons(row),
+            },
+        ];
+        const data = []
+        if(this.state.leads.length > 0)
+        {
+            this.state.leads.map((value, index) => {
+                data.push({ 
+                    id: value.id, 
+                    value: value, 
+                    title: value.name, 
+                    mobile: value.mobile, 
+                    address:  value.address,  
+                    email: value.email, 
+                    owner: value.owner, 
+                    purpose: value.purpose, 
+                    source: value.source, 
+                    created_at: value.created_at,
+                })
+            })
+        }
         return (
             <>
                 <div className="row">
@@ -105,71 +176,8 @@ export default class Leads extends Component {
                         </div>
                         <div className="row mt-3">
                             <div className="col-12">
-                            <div className="loading" style={{ display: this.state.display ? 'block' : 'none' }}>
-                                <div className="text-center">
-                                    <span>
-                                        Loading...
-                                    </span>
-                                </div>
-                            </div>
-                                <div className="table-responsive bg-white m-0 p-3 rounded shadow">
-                                    <table className="table table-bordered m-0">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col">Leads Name</th>
-                                                <th scope="col">Contacts</th>
-                                                <th scope="col">Leads source</th>
-                                                <th scope="col">Created time</th>
-                                                <th scope="col">Leads owner</th>
-                                                <th scope="col">Leads purpose</th>
-                                                <th scope="col"></th>
-                                                {/* <th scope="col"><button className="btn Btn32 text-danger"><i className="fas fa-trash"></i></button></th> */}
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                        {this.state.leads.length > 0 ? this.state.leads.map((value, index) => {
-                                                    return (
-                                                        <tr key={index}>
-                                                            <td>
-                                                                {value.name}
-                                                            </td>
-                                                            <td>
-                                                                <p className="m-0 p-0">{value.mobile}</p>
-                                                                <p className="m-0 p-0">{value.phone}</p>
-                                                                <p className="m-0 p-0">{value.email}</p>
-                                                                <p className="m-0 p-0"><i>{value.address}</i></p>
-                                                            </td>
-                                                            <td>
-                                                                {value.source}
-                                                            </td>
-                                                            <td>
-                                                                {value.created_at}
-                                                            </td>
-                                                            <td>
-                                                                {value.owner}
-                                                            </td>
-                                                            <td>
-                                                                {value.purpose}
-                                                            </td>
-                                                            <td className="btnTD text-center">
-                                                                <button className="btn Btn32 btn-warning" data-toggle="modal" data-target="#exampleModal" onClick={() => this.addComponent(value)}><i className="fas fa-pencil-alt"></i></button>
-                                                                {/* <button className="btn Btn32 btn-info" onClick={() => this.addStudent(value.id)}><i class="fas fa-user-plus"></i></button> */}
-                                                                <button className="btn Btn32 btn-primary" data-toggle="modal" data-target="#notesModal" onClick={() => this.notes(value.id)}><i className="fas fa-clipboard-list"></i></button>
-
-                                                                {/* <button className="btn Btn32 btn-danger" data-id={value.id} data-link="lesson" onClick={this.delete}><i className="fas fa-trash"></i></button> */}
-
-                                                            </td>
-                                                        </tr>
-                                                    )
-                                                }) :  
-                                                    <tr>
-                                                        <td colSpan="12" className="text-center">
-                                                            Empty
-                                                        </td>
-                                                    </tr>
-                                                 }
-                                        </tbody>
-                                    </table>
+                                <div className="bg-white m-0 p-3 rounded shadow">
+                                    <Datatables columns={columns} data={data} pending={this.state.display} filter={`title`}/>
                                 </div>
                             </div>
                         </div>

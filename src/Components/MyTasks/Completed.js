@@ -3,6 +3,7 @@ import { NavLink  } from "react-router-dom";
 import axios from 'axios';
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 import 'react-notifications/lib/notifications.css';
+import Datatables from '../Datatables';
 
 class Completed extends React.Component {
 	constructor(props) {
@@ -51,7 +52,90 @@ class Completed extends React.Component {
             this.load()
         }
     }
+	buttons = (row) => {
+        return (
+            <div style={{ minWidth: '250px' }}>
+                <button className="btn Btn32 btn-danger" onClick={() => this.delete(row.value)}><i className="fas fa-trash"></i></button>
+            </div>
+        )
+    }
+    date = (value) => {
+        console.log(value)
+        return(
+            <>
+                Start: 
+                <p className="text-success">{value.start_date}, {value.start_time}</p>
+                End: 
+                <p className="text-danger">{value.end_date}, {value.end_time}</p>
+            </>
+        )
+    }
 	render() {
+		const columns = [
+            {
+                name: 'Execution date',
+                selector: row => this.date(row),
+            },
+            {
+                name: 'Description',
+                selector: row => row.note,
+            },
+            {
+                name: 'Client',
+                sortable: true,
+                selector: row => row.client,
+            },
+            {
+                name: 'Mobile',
+                selector: row => row.mobile,
+            },
+            {
+                name: 'Email',
+                sortable: true,
+                selector: row => row.email,
+            },
+            {
+                name: 'Purpose',
+                sortable: true,
+                selector: row => row.purpose,
+            },
+            {
+                name: 'Priority',
+                sortable: true,
+                selector: row => row.priority,
+            },
+            {
+                name: 'Created at',
+                sortable: true,
+                selector: row => row.created_at,
+            },
+            {
+                name: '',
+                selector: row => this.buttons(row),
+            },
+        ];
+        const data = []
+        const priority = ['Low', 'Middle', 'High'];
+        if(this.state.tasks.length > 0)
+        {
+            this.state.tasks.map((value, index) => {
+                data.push({ 
+                    id: value.id, 
+                    value: value, 
+                    note: value.note, 
+                    start_date: value.start_date, 
+                    start_time: value.start_time, 
+                    end_date: value.end_date, 
+                    end_time: value.start_time, 
+                    client: value.client, 
+                    mobile:  value.mobile,
+                    email:  value.email,
+                    purpose: value.purpose, 
+                    priority: priority[value.priority], 
+                    created_at: value.created_at,
+                })
+            })
+        }
 		
 		return (
 			<>
@@ -75,66 +159,8 @@ class Completed extends React.Component {
 					</div>
 					<div className="row mt-3">
 						<div className="col-12">
-                        <div className="loading" style={{ display: this.state.display ? 'block' : 'none' }}>
-                                <div className="text-center">
-                                    <span>
-                                        Loading...
-                                    </span>
-                                </div>
-                            </div>
-							<div className="table-responsive bg-white m-0 p-3 rounded shadow">
-								<table class="table table-bordered m-0">
-									<thead>
-										<tr>
-											<th scope="col">Execution date</th>
-											<th scope="col">Description</th>
-											<th scope="col">Client</th>
-											<th scope="col">Client Contact</th>
-											<th scope="col">Purpose</th>
-											<th scope="col"></th>
-										</tr>
-									</thead>
-									<tbody>
-									{this.state.tasks.length > 0 ? this.state.tasks.map((value, index) => {
-                                                return (
-                                                    <tr key={index}>
-                                                        <td>
-															Start: 
-                                                            <p className="text-success">{value.start_date}, {value.start_time}</p>
-															End: 
-                                                            <p className="text-danger">{value.end_date}, {value.end_time}</p>
-                                                        </td>
-                                                        <td>
-                                                            {value.note}
-                                                        </td>
-                                                        <td>
-                                                            {value.client}
-                                                        </td>
-                                                        <td>
-                                                            <p>{value.mobile}</p>
-                                                            <p>{value.email}</p>
-                                                        </td>
-                                                        <td>
-                                                        {value.purpose}
-                                                        </td>
-                                                        <td className="btnTD text-center">
-															{/* <button className="btn Btn32 btn-success"><i class="far fa-thumbs-up"></i></button> */}
-															{/* <button className="btn Btn32 btn-warning" data-toggle="modal" data-target="#exampleModal" onClick={() => this.addComponent(value)}><i class="fas fa-pencil-alt"></i></button> */}
-															{/* <button className="btn Btn32 btn-info"><i class="fas fa-eye"></i></button> */}
-                                                            <button className="btn Btn32 btn-danger" onClick={() => this.delete(value)}><i class="fas fa-trash"></i></button>
-
-                                                        </td>
-                                                    </tr>
-                                                )
-                                            }) :
-                                                <tr>
-                                                    <td colSpan="12" className="text-center">
-                                                        Empty
-                                                        </td>
-                                                </tr>
-                                            }
-									</tbody>
-								</table>
+							<div className="bg-white m-0 p-3 rounded shadow">
+                                <Datatables columns={columns} data={data} pending={this.state.display} filter={`note`}/>
 							</div>
 						</div>
 					</div>
